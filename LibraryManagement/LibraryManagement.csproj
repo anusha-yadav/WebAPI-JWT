@@ -24,4 +24,8 @@
     <ProjectReference Include="..\LibraryManagement.Repository\LibraryManagement.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+
 </Project>
