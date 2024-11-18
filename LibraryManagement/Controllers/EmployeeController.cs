@@ -1,4 +1,5 @@
 ﻿using LibraryManagement.Data.Entities;
+using LibraryManagement.Filters;
 using LibraryManagement.Repository.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Controllers
 {
+    [ServiceFilter(typeof(ExceptionFilter))]
+    [ServiceFilter(typeof(LoggingFilter))]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeController : ControllerBase
@@ -17,7 +20,6 @@ namespace LibraryManagement.Controllers
         {
             EmployeeRepository = employeeRepository;
         }
-
         
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> Get()
@@ -25,7 +27,7 @@ namespace LibraryManagement.Controllers
             return await Task.FromResult(EmployeeRepository.GetEmployeeDetails());
         }
 
-        [Authorize(Roles ="Employee")]
+        [Authorize(Roles ="Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> Get(int id)
         {

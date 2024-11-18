@@ -47,7 +47,7 @@ namespace LibraryManagement.Controllers
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                         new Claim("UserId", user.UserId.ToString()),
                         new Claim("DisplayName", user.DisplayName),
-                        new Claim("UserName", user.UserName),
+                        new Claim(ClaimTypes.Name, user.UserName),
                         new Claim("Email", user.Email),
                         new Claim(ClaimTypes.Role, user.Role),
                     };

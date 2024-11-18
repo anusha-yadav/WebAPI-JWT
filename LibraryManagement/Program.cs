@@ -1,4 +1,5 @@
 using LibraryManagement.Data;
+using LibraryManagement.Filters;
 using LibraryManagement.Repository.Contracts;
 using LibraryManagement.Repository.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,9 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<LoggingFilter>();
+    options.Filters.Add<ExceptionFilter>();
+});
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+builder.Services.AddAuthentication().AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
@@ -31,18 +36,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
-
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
 builder.Services.AddDbContext<EmployeeDBContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeDB")));
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<LoggingFilter>();
 
 var app = builder.Build();
 
@@ -53,9 +52,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthentication();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+
 
 app.UseAuthorization();
 
